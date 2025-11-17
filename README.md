@@ -67,7 +67,7 @@ jobs:
         uses: ./
         with:
           stackstate_API_Key: ${{ secrets.stackstate_API_Key }}
-          stackstateClusterName: 'testing-amolk'
+          stackstateClusterName: 'cluster_name'
           stackstate_URL: 'https://example.stackstate.io/receiver/stsAgent'
           Namespace: 'suse-observability'
 ```
@@ -119,34 +119,7 @@ helm upgrade --install suse-observability-agent suse-observability/suse-observab
   --set "global.skipSslValidation"="false"
 ```
 
----
-
-## Troubleshooting
-
-* **`Error: flag needs an argument: --version`**
-
-  * Cause: `--version` was appended without a value.
-  * Fix: Provide `ChartVersion` input or leave it empty so the action omits `--version` and uses the latest.
-
-* **`error: name must be specified`**
-
-  * Cause: `Namespace` was empty when calling `kubectl`.
-  * Fix: Provide `Namespace` input or rely on default `suse-observability`.
-
-* **`repository not found`**
-
-  * Cause: Wrong HelmRepo URL or chart name.
-  * Fix: Verify `HelmRepo` and `ChartName` inputs. Try adding the repo locally and search for the chart.
-
-* **`unauthorized` / `401`**
-
-  * Cause: Invalid API key.
-  * Fix: Verify `stackstate_API_Key` stored in GitHub Secrets.
-
----
 
 ## Maintainer
-
 **[amolk](https://github.com/amolkharche13)** — contributions welcome. Open issues or PRs to improve the action.
-
 ---
