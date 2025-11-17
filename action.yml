@@ -63,11 +63,13 @@ runs:
             echo "Namespace "${{inputs.Namespace}}" already exists"
           fi
           
-          if [[ -n "${inputs.ChartVersion}" ]]; then
-             ChartVersion="--version ${inputs.ChartVersion}"
+          CHART_VERSION="${{ inputs.ChartVersion }}"
+          VERSION_ARG=""
+          if [[ -n "${CHART_VERSION}" ]]; then
+            VERSION_ARG="--version ${CHART_VERSION}"
           fi
 
-    - name: Add Helm repo (if HelmRepo provided)
+    - name: Add Helm repo
       shell: bash
       if: ${{ inputs.HelmRepo != '' }}
       run: |
