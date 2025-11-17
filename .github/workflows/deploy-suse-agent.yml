@@ -33,7 +33,7 @@ jobs:
       
 
       - name: Use action to install SUSE Observability Agent
-        uses: .
+        uses: ./
         with:
           API_Key: ${{ secrets.stackstate_API_KEY }}
           ClusterName: ${{ inputs.ClusterName }}
