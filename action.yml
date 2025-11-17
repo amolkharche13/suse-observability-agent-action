@@ -69,6 +69,13 @@ runs:
       run: |
         helm repo add suse-observability "${{ inputs.HelmRepo }}" || true
         helm repo update
+
+        CHART_VERSION="${{ inputs.ChartVersion }}"
+
+        VERSION_ARG=""
+        if [[ -n "${CHART_VERSION}" ]]; then
+          VERSION_ARG="--version ${CHART_VERSION}"
+        fi
     
         helm upgrade --install suse-observability-agent suse-observability/suse-observability-agent \
           --namespace "${{inputs.Namespace}}" --create-namespace \
@@ -76,4 +83,4 @@ runs:
           --set-string 'stackstate.cluster.name'=${{inputs.stackstateClusterName}} \
           --set-string 'stackstate.url'=${{inputs.stackstate_URL}} \
           --set "nodeAgent.skipKubeletTLSVerify"=${{inputs.NodeagentskipTLSVerify}} \
-          --set "global.skipSslValidation"=${{inputs.GlobalskipSslValidation}} --version ${{inputs.ChartVersion}}
+          --set "global.skipSslValidation"=${{inputs.GlobalskipSslValidation}} ${VERSION_ARG}

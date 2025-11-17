@@ -22,4 +22,4 @@ jobs:
           stackstate_API_Key: ${{ secrets.stackstate_API_Key }}
           stackstateClusterName: 'testing-amolk'
           stackstate_URL: 'https://rancher-hosted.app.stackstate.io/receiver/stsAgent'
-          Namespace: "monitoring"  
+          Namespace: "suse-observability"  
