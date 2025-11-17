@@ -2,7 +2,7 @@
 
 [![Action Status](https://img.shields.io/badge/action-ready-brightgreen.svg)]()
 
-A GitHub Action that installs or upgrades the **SUSE Observability Agent** on any Kubernetes cluster using **Helm**. It ensures the namespace exists, optionally adds the Helm repository, and installs or upgrades the chart with configurable options.
+A GitHub Action that installs or upgrades the **SUSE Observability Agent** on any Kubernetes cluster using **Helm**. It ensures the namespace exists and installs or upgrades the chart with configurable options.
 
 ---
 
