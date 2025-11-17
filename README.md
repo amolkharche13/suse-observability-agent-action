@@ -9,7 +9,6 @@ A GitHub Action that installs or upgrades the **SUSE Observability Agent** on an
 ## 🚀 Features
 
 * ✅ Automatic namespace creation
-* ✅ Helm repo auto-add + update
 * ✅ Install or upgrade SUSE Observability Agent via Helm
 * ✅ Secret-friendly API key handling
 * ✅ Optional chart version pinning (use latest if omitted)
