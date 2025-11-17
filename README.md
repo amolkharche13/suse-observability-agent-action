@@ -113,8 +113,8 @@ helm repo update
 helm upgrade --install suse-observability-agent suse-observability/suse-observability-agent \
   --namespace "suse-observability" --create-namespace \
   --set-string 'stackstate.apiKey'="<YOUR_API_KEY>" \
-  --set-string 'stackstate.cluster.name'="testing-amolk" \
-  --set-string 'stackstate.url'="https://stackstate.io/receiver/stsAgent" \
+  --set-string 'stackstate.cluster.name'="cluster_name" \
+  --set-string 'stackstate.url'="https://example.stackstate.io/receiver/stsAgent" \
   --set "nodeAgent.skipKubeletTLSVerify"="true" \
   --set "global.skipSslValidation"="false"
 ```
