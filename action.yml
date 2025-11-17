@@ -76,4 +76,4 @@ runs:
           --set-string 'stackstate.cluster.name'=${{inputs.stackstateClusterName}} \
           --set-string 'stackstate.url'=${{inputs.stackstate_URL}} \
           --set "nodeAgent.skipKubeletTLSVerify"=${{inputs.NodeagentskipTLSVerify}} \
-          --set "global.skipSslValidation"=${{inputs.GlobalskipSslValidation}} --version ${{ChartVersion}}
+          --set "global.skipSslValidation"=${{inputs.GlobalskipSslValidation}} --version ${{inputs.ChartVersion}}
