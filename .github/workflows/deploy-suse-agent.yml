@@ -23,4 +23,4 @@ jobs:
           stackstateClusterName: 'testing-amolk'
           stackstate_URL: 'https://rancher-hosted.app.stackstate.io/receiver/stsAgent'
           Namespace: "suse-observability"  
-          ChartVersion: "1.1.2"
+          ChartVersion: "1.0.78"
