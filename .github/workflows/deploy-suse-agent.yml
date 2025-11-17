@@ -12,6 +12,7 @@ on:
       StackState_URL:
         description: "Stackstate cluster URL e.g. https://example.stackstate.io/receiver/stsAgent"
         required: true
+      
 jobs:
   install-agent:
     runs-on: ubuntu-latest
@@ -25,6 +26,4 @@ jobs:
           API_Key: ${{ secrets.stackstate_API_KEY }}
           ClusterName: ${{ inputs.ClusterName }}
           StackState_URL: ${{ inputs.StackState_URL}}
-          Namespace: "suse-observability"
-          HelmRepo: "https://charts.rancher.com/server-charts/prime/suse-observability"    
-          ChartName: "suse-observability/suse-observability-agent"    
+          Namespace: "suse-observability"  
