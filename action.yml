@@ -84,11 +84,9 @@ runs:
         helm upgrade --install \
         --namespace suse-observability \
         --create-namespace \
-        --namespace "${{ inputs.Namespace }}" \
-          $VERSION_ARG \
-          --set-string 'stackstate.apiKey'= "${API_KEY}" \
-          --set-string 'stackstate.cluster.name'= '${CLUSTER_NAME}'
-          --set-string 'stackstate.url'='${STACKSTATE_URL}' \
-          --set-string 'nodeAgent.skipKubeletTLSVerify=true'='${NodeaAgentSkipTLSVerify}'\
-          --set-string 'nodeAgent.skipKubeletTLSVerify'= '${GlobalKkipSslValidation}' \
-           suse-observability-agent suse-observability/suse-observability-agent 
+        --set-string 'stackstate.apiKey'= "${API_KEY}" \
+        --set-string 'stackstate.cluster.name'= '${CLUSTER_NAME}'
+        --set-string 'stackstate.url'='${STACKSTATE_URL}' \
+        --set-string 'nodeAgent.skipKubeletTLSVerify=true'='${NodeaAgentSkipTLSVerify}'\
+        --set-string 'nodeAgent.skipKubeletTLSVerify'= '${GlobalKkipSslValidation}' \
+        suse-observability-agent suse-observability/suse-observability-agent 
