@@ -4,35 +4,11 @@ on:
   push:
 
 jobs:
-  deploy:
-    env:
-      Namespace: "suse-observability"   # define if you want to use different
+  deploy-suse-observability-agent:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Setup Kubeconfig
-        uses: azure/k8s-set-context@v4
-        with:
-          method: kubeconfig
-          kubeconfig: ${{secrets.KUBECONFIG}}
-
-      - name: Ensure namespace exists
-        shell: bash
-        run: |
-          if ! kubectl get ns "${Namespace}" >/dev/null 2>&1; then
-            kubectl create ns "${Namespace}"
-            echo "Namespace ${Namespace} created"
-          else
-            echo "Namespace ${Namespace} already exists"
-          fi
-
 
       - name: Use local action to install SUSE Observability Agent
         uses: ./
@@ -40,5 +16,5 @@ jobs:
           stackstate_API_Key: ${{ secrets.stackstate_API_Key }}
           stackstateClusterName: 'testing-amolk'
           stackstate_URL: 'https://rancher-hosted.app.stackstate.io/receiver/stsAgent'
-          Namespace: "${{ env.Namespace }}"
+          Namespace: "suse-observability"
           ChartVersion: 1.1.2

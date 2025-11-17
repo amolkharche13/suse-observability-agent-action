@@ -43,10 +43,31 @@ runs:
     - name: Repo checkout
       uses: actions/checkout@v4
 
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Setup Kubeconfig
+      uses: azure/k8s-set-context@v4
+      with:
+        method: kubeconfig
+        kubeconfig: ${{secrets.KUBECONFIG}}
+
     - name: Setup Helm
       uses: azure/setup-helm@v3
       with:
         version: 'latest'
+
+    - name: Ensure namespace exists
+        shell: bash
+        run: |
+          if ! kubectl get ns "${Namespace}" >/dev/null 2>&1; then
+            kubectl create ns "${Namespace}"
+            echo "Namespace ${Namespace} created"
+          else
+            echo "Namespace ${Namespace} already exists"
+          fi
 
     - name: Add Helm repo (if HelmRepo provided)
       shell: bash
