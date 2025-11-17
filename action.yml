@@ -86,16 +86,8 @@ runs:
           VERSION_ARG="--version ${CHART_VERSION}"
         fi
 
-        # Helm values:
-        # - apiKey and URL are strings
-        # - cluster.name is string
-        # - booleans should use --set (not --set-string)
-        #
-        # Ensure proper quoting and line continuation.
-        helm upgrade --install suse-observability-agent "${CHART_NAME}" \
-          --namespace "${NAMESPACE}" \
-          --create-namespace \
-          ${VERSION_ARG} \
+        helm upgrade --install suse-observability-agent suse-observability/suse-observability-agent \
+          --namespace "${NAMESPACE}" --create-namespace \
           --set-string "stackstate.apiKey=${STACKSTATE_API_KEY}" \
           --set-string "stackstate.cluster.name=${CLUSTER_NAME}" \
           --set-string "stackstate.url=${STACKSTATE_URL}" \

@@ -1,25 +1,7 @@
 name: Install SUSE Observability Agent
 
 on:
-  workflow_dispatch:
-    inputs:
-      stackstateClusterName:
-        description: "Cluster Name"
-        required: true
-      stackstate_API_Key:
-        description: "Service token from StackState cluster (if you prefer, store this in secrets and reference secrets.stackstate_API_Key)."
-        required: true
-      stackstate_URL:
-        description: "Stackstate cluster URL e.g. https://example.stackstate.io/receiver/stsAgent"
-        required: true
-      namespace:
-        description: "Kubernetes namespace to install into"
-        required: false
-        default: "suse-observability"
-      cluster-context:
-        description: "Optional kubeconfig context to switch to before creating namespace (if using kubeconfig secret)."
-        required: false
-        default: ""
+  push:
 
 jobs:
   deploy:
@@ -48,19 +30,10 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Switch context (optional)
-        if: ${{ github.event.inputs['cluster-context'] != '' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          kubectl config use-context "${{ github.event.inputs['cluster-context'] }}" || true
-          echo "Switched context to: ${{ github.event.inputs['cluster-context'] }}"
-
       - name: Ensure namespace exists
         shell: bash
         run: |
           set -euo pipefail
-          NAMESPACE="${{ github.event.inputs.namespace }}"
           kubectl get ns "${NAMESPACE}" --ignore-not-found || kubectl create ns "${NAMESPACE}"
           echo "Ensured namespace ${NAMESPACE} exists"
 
@@ -68,6 +41,6 @@ jobs:
         uses: ./
         with:
           stackstate_API_Key: ${{ secrets.stackstate_API_Key }}
-          stackstateClusterName: ${{ github.event.inputs.stackstateClusterName }}
-          stackstate_URL: ${{ github.event.inputs.stackstate_URL }}
-          Namespace: ${{ github.event.inputs.namespace }}
+          stackstateClusterName: "testing-amolk"
+          stackstate_URL: "https://rancher-hosted.app.stackstate.io/receiver/stsAgent"
+          Namespace: "suse-observability"
