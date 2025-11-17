@@ -50,6 +50,8 @@ runs:
 
     - name: Setup Helm
       uses: azure/setup-helm@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         version: 'latest'
 
