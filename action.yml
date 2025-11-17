@@ -1,4 +1,4 @@
-name: "Install SUSE Observability Agent"
+name: "SUSE Observability Agent"
 description: "Installs or upgrades SUSE Observability Agent."
 author: ""
 
