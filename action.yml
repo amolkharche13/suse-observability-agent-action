@@ -75,7 +75,6 @@ runs:
       run: |
         # customize values via --set or a values file as needed.
         set -euo pipefail
-        CHART="${{ inputs.ChartName }}"
         VERSION_ARG=""
         if [[ -n "${{ inputs.ChartVersion }}" ]]; then
           VERSION_ARG="--version ${{ inputs.ChartVersion }}"
@@ -87,6 +86,6 @@ runs:
         --set-string 'stackstate.apiKey'= "${API_KEY}" \
         --set-string 'stackstate.cluster.name'= '${CLUSTER_NAME}'
         --set-string 'stackstate.url'='${STACKSTATE_URL}' \
-        --set-string 'nodeAgent.skipKubeletTLSVerify=true'='${NodeaAgentSkipTLSVerify}'\
+        --set-string 'nodeAgent.skipKubeletTLSVerify='${NodeaAgentSkipTLSVerify}'\
         --set-string 'nodeAgent.skipKubeletTLSVerify'= '${GlobalKkipSslValidation}' \
         suse-observability-agent suse-observability/suse-observability-agent 
