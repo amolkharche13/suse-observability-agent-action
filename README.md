@@ -1,4 +1,4 @@
-# Install SUSE Observability Agent
+# SUSE Observability Agent
 
 [![Action Status](https://img.shields.io/badge/action-ready-brightgreen.svg)]()
 
