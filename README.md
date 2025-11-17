@@ -45,14 +45,11 @@ A GitHub Action that installs or upgrades the **SUSE Observability Agent** on an
 
 ```yaml
 name: Install SUSE Observability Agent
-
 on:
   push:
-
 jobs:
   deploy-suse-observability-agent:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
