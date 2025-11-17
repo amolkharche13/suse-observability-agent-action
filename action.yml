@@ -84,3 +84,8 @@ runs:
           --set-string 'stackstate.url'=${{inputs.stackstate_URL}} \
           --set "nodeAgent.skipKubeletTLSVerify"=${{inputs.NodeagentskipTLSVerify}} \
           --set "global.skipSslValidation"=${{inputs.GlobalskipSslValidation}} ${VERSION_ARG}
+
+
+branding:
+  icon: 'https://avatars.githubusercontent.com/u/10511829?s=200&v=4'
+  color: 'blue'
