@@ -56,11 +56,11 @@ runs:
     - name: Ensure namespace exists
       shell: bash
       run: |
-          if ! kubectl get ns "${Namespace}" >/dev/null 2>&1; then
-            kubectl create ns "${Namespace}"
-            echo "Namespace ${Namespace} created"
+          if ! kubectl get ns "${{inputs.Namespace}}" >/dev/null 2>&1; then
+            kubectl create ns "${{inputs.Namespace}}"
+            echo "Namespace "${{inputs.Namespace}}" created"
           else
-            echo "Namespace ${Namespace} already exists"
+            echo "Namespace "${{inputs.Namespace}}" already exists"
           fi
 
     - name: Add Helm repo (if HelmRepo provided)
@@ -72,7 +72,7 @@ runs:
         helm repo update
     
         helm upgrade --install suse-observability-agent suse-observability/suse-observability-agent \
-          --namespace "${Namespace}" --create-namespace \
+          --namespace "${{inputs.Namespace}}" --create-namespace \
           --set-string 'stackstate.apiKey'=${{inputs.stackstate_API_Key}} \
           --set-string 'stackstate.cluster.name'=${{inputs.stackstateClusterName}} \
           --set-string 'stackstate.url'=${{inputs.stackstate_URL}} \
