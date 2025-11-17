@@ -1,0 +1,93 @@
+name: "Install SUSE Observability Agent"
+description: "Installs or upgrades SUSE Observability Agent via Helm using provided API key, cluster name name and StackState URL."
+author: "amolk"
+inputs:
+  stackstate_API_Key:
+    description: "API key (treat as secret)."
+    required: true
+  stackstateClusterName:
+    description: "Observed Cluster name"
+    required: true
+  stackstate_URL:
+    description: "SUSE Observability cluster URL"
+    required: true
+  Namespace:
+    description: "Kubernetes namespace to install into."
+    required: false
+    default: "suse-observability"
+  HelmRepo:
+    description: "Helm repo URL or repo name (if chart repo must be added)."
+    required: false
+    default: "https://charts.rancher.com/server-charts/prime/suse-observability"
+  ChartName:
+    description: "Chart name (repo/chart or chart if repo added)."
+    required: false
+    default: "suse-observability/suse-observability-agent"
+  ChartVersion:
+    description: "Optional chart version constraint."
+    required: false
+    default: ""
+  NodeagentskipTLSVerify:
+    description: "Boolean: whether to set nodeAgent.skipKubeletTLSVerify=true"
+    required: false
+    default: true
+  GlobalskipSslValidation:
+    description: "Boolean: whether to set global.skipSslValidation=true"
+    required: false
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Repo checkout
+      uses: actions/checkout@v4
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Setup Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: 'latest'
+
+    - name: Ensure namespace exists
+      shell: bash
+      run: |
+        kubectl get ns "${{ inputs.Namespace }}" --ignore-not-found || kubectl create ns "${{ inputs.Namespace }}"
+
+    - name: Add Helm repo (if HelmRepo provided)
+      shell: bash
+      if: ${{ inputs.HelmRepo != '' }}
+      run: |
+        helm repo add suse-observability "${{ inputs.HelmRepo }}" || true
+        helm repo update
+
+    - name: Install or upgrade SUSE Observability Agent
+      shell: bash
+      env:
+        API_KEY: ${{ inputs.API_Key }}
+        STACKSTATE_URL: ${{ inputs.stackState_URL }}
+        CLUSTER_NAME: ${{ inputs.stackstateClusterName}}
+        NodeaAgentSkipTLSVerify: ${{ inputs.NodeagentskipTLSVerify}}
+        GlobalKkipSslValidation: ${{ inputs.GlobalskipSslValidation}}
+
+      run: |
+        # customize values via --set or a values file as needed.
+        set -euo pipefail
+        CHART="${{ inputs.ChartName }}"
+        VERSION_ARG=""
+        if [[ -n "${{ inputs.ChartVersion }}" ]]; then
+          VERSION_ARG="--version ${{ inputs.ChartVersion }}"
+        fi
+
+        helm upgrade --install --namespace suse-observability --create-namespace \
+         suse-observability-agent "$CHART" \
+          --namespace "${{ inputs.Namespace }}" \
+          $VERSION_ARG \
+          --set-string 'stackstate.apiKey'= "${API_KEY}" \
+          --set-string 'stackstate.cluster.name'= '${CLUSTER_NAME}'
+          --set-string 'stackstate.url'='${STACKSTATE_URL}' \
+          --set-string 'nodeAgent.skipKubeletTLSVerify=true'='${NodeaAgentSkipTLSVerify}'\
+          --set-string 'nodeAgent.skipKubeletTLSVerify'= '${GlobalKkipSslValidation}'
