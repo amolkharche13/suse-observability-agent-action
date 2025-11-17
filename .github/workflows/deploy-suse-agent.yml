@@ -7,7 +7,7 @@ on:
       stackstateClusterName:
         description: "Cluster Name"
         required: true
-       stackstate_API_Key:
+      stackstate_API_Key:
         description: "Service token from Stackstate cluster"
         required: true
       stackstate_URL:
