@@ -1,6 +1,7 @@
 name: "Install SUSE Observability Agent"
-description: "Installs or upgrades SUSE Observability Agent via Helm using provided API key, cluster name name and StackState URL."
+description: "Installs or upgrades SUSE Observability Agent via Helm using provided API key, cluster name and StackState URL."
 author: "amolk"
+
 inputs:
   stackstate_API_Key:
     description: "API key (treat as secret)."
@@ -9,7 +10,7 @@ inputs:
     description: "Observed Cluster name"
     required: true
   stackstate_URL:
-    description: "SUSE Observability cluster URL"
+    description: "SUSE Observability cluster URL (receiver endpoint)."
     required: true
   Namespace:
     description: "Kubernetes namespace to install into."
@@ -28,13 +29,13 @@ inputs:
     required: false
     default: ""
   NodeagentskipTLSVerify:
-    description: "Boolean: whether to set nodeAgent.skipKubeletTLSVerify=true"
+    description: "Boolean: whether to set nodeAgent.skipKubeletTLSVerify (true/false)."
     required: false
-    default: true
+    default: "true"
   GlobalskipSslValidation:
-    description: "Boolean: whether to set global.skipSslValidation=true"
+    description: "Boolean: whether to set global.skipSslValidation (true/false)."
     required: false
-    default: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -51,6 +52,7 @@ runs:
       uses: azure/setup-helm@v3
       with:
         version: 'latest'
+
     - name: Ensure namespace exists
       shell: bash
       run: |
@@ -60,31 +62,42 @@ runs:
       shell: bash
       if: ${{ inputs.HelmRepo != '' }}
       run: |
+        # attempt to add the repo (if value is a URL this will add; if it's an existing repo name this will harmlessly fail)
         helm repo add suse-observability "${{ inputs.HelmRepo }}" || true
         helm repo update
 
     - name: Install or upgrade SUSE Observability Agent
       shell: bash
       env:
-        API_KEY: ${{ inputs.API_Key }}
-        STACKSTATE_URL: ${{ inputs.stackState_URL }}
-        CLUSTER_NAME: ${{ inputs.stackstateClusterName}}
-        NodeaAgentSkipTLSVerify: ${{ inputs.NodeagentskipTLSVerify}}
-        GlobalKkipSslValidation: ${{ inputs.GlobalskipSslValidation}}
-
+        STACKSTATE_API_KEY: ${{ inputs.stackstate_API_Key }}
+        STACKSTATE_URL: ${{ inputs.stackstate_URL }}
+        CLUSTER_NAME: ${{ inputs.stackstateClusterName }}
+        NAMESPACE: ${{ inputs.Namespace }}
+        CHART_NAME: ${{ inputs.ChartName }}
+        CHART_VERSION: ${{ inputs.ChartVersion }}
+        NODEAGENT_SKIP_TLS_VERIFY: ${{ inputs.NodeagentskipTLSVerify }}
+        GLOBAL_SKIP_SSL_VALIDATION: ${{ inputs.GlobalskipSslValidation }}
       run: |
-        # customize values via --set or a values file as needed.
         set -euo pipefail
+
+        # Build version arg if provided
         VERSION_ARG=""
-        if [[ -n "${{ inputs.ChartVersion }}" ]]; then
-          VERSION_ARG="--version ${{ inputs.ChartVersion }}"
+        if [[ -n "${CHART_VERSION}" ]]; then
+          VERSION_ARG="--version ${CHART_VERSION}"
         fi
 
-        helm upgrade --install  suse-observability-agent suse-observability/suse-observability-agent \
-        --namespace suse-observability \
-        --create-namespace \
-        --set-string 'stackstate.apiKey'= "${API_KEY}" \
-        --set-string 'stackstate.cluster.name'= '${CLUSTER_NAME}'
-        --set-string 'stackstate.url'='${STACKSTATE_URL}' \
-        --set-string 'nodeAgent.skipKubeletTLSVerify='${NodeaAgentSkipTLSVerify}'\
-        --set-string 'nodeAgent.skipKubeletTLSVerify'= '${GlobalKkipSslValidation}' 
+        # Helm values:
+        # - apiKey and URL are strings
+        # - cluster.name is string
+        # - booleans should use --set (not --set-string)
+        #
+        # Ensure proper quoting and line continuation.
+        helm upgrade --install suse-observability-agent "${CHART_NAME}" \
+          --namespace "${NAMESPACE}" \
+          --create-namespace \
+          ${VERSION_ARG} \
+          --set-string "stackstate.apiKey=${STACKSTATE_API_KEY}" \
+          --set-string "stackstate.cluster.name=${CLUSTER_NAME}" \
+          --set-string "stackstate.url=${STACKSTATE_URL}" \
+          --set "nodeAgent.skipKubeletTLSVerify=${NODEAGENT_SKIP_TLS_VERIFY}" \
+          --set "global.skipSslValidation=${GLOBAL_SKIP_SSL_VALIDATION}"
