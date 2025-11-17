@@ -55,7 +55,7 @@ runs:
         # attempt to add the repo (if value is a URL this will add; if it's an existing repo name this will harmlessly fail)
         helm repo add suse-observability "${{ inputs.HelmRepo }}" || true
         helm repo update
-      run: |
+      
         set -euo pipefail
 
         # Build version arg if provided
