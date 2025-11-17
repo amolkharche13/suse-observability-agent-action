@@ -34,8 +34,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          kubectl get ns "${NAMESPACE}" --ignore-not-found || kubectl create ns "${NAMESPACE}"
-          echo "Ensured namespace ${NAMESPACE} exists"
+          kubectl get ns "${Namespace}" --ignore-not-found || kubectl create ns "${Namespace}"
+          echo "Ensured namespace ${Namespace} exists"
 
       - name: Use local action to install SUSE Observability Agent
         uses: ./
