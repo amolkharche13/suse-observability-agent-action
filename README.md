@@ -109,7 +109,7 @@ To manually replicate the action logic for debugging:
 
 ```bash
 # Add and update helm repo
-helm repo add suse-observability https://charts.rancher.com/server-charts/prime/suse-observability || true
+helm repo add suse-observability https://charts.rancher.com/server-charts/prime/suse-observability
 helm repo update
 
 # Example helm upgrade (without version, uses latest)
@@ -121,8 +121,3 @@ helm upgrade --install suse-observability-agent suse-observability/suse-observab
   --set "nodeAgent.skipKubeletTLSVerify"="true" \
   --set "global.skipSslValidation"="false"
 ```
-
-
-## Maintainer
-**[amolk](https://github.com/amolkharche13)** — contributions welcome. Open issues or PRs to improve the action.
----
