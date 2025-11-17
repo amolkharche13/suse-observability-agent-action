@@ -15,21 +15,37 @@ on:
         required: true
       
 jobs:
-  install-agent:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup kubectl (for the workflow) and show contexts
+      - name: Configure kubeconfig from secret (if provided)
+        shell: bash
+        env:
+          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG }}
+        run: |
+          set -euo pipefail
+          if [ -n "${KUBECONFIG_SECRET:-}" ]; then
+            mkdir -p "$HOME/.kube"
+            echo "$KUBECONFIG_SECRET" > "$HOME/.kube/config"
+            chmod 600 "$HOME/.kube/config"
+            echo "Wrote kubeconfig from secret to $HOME/.kube/config"
+          else
+            echo "No KUBECONFIG secret provided — assuming runner already has kube access or you will use a self-hosted runner."
+          fi
+
+      - name: Setup kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
 
-      - name: Ensure helm is available in the workflow (optional, action will also setup helm)
-        uses: azure/setup-helm@v3
-        with:
-          version: 'latest'
+      - name: Ensure namespace exists
+        shell: bash
+        run: |
+          kubectl config use-context "${{ github.event.inputs.cluster-context }}" || true
+          kubectl get ns my-namespace --ignore-not-found || kubectl create ns my-namespace
       
 
       - name: Use action to install SUSE Observability Agent
