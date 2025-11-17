@@ -4,9 +4,9 @@ on:
   push:
 
 jobs:
-  env:
-    Namespace: "suse-observability"   # define if you want to use different
   deploy:
+    env:
+      Namespace: "suse-observability"   # define if you want to use different
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
