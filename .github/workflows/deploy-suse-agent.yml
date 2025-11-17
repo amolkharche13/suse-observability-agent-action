@@ -12,30 +12,19 @@ jobs:
 
       - name: Configure kubeconfig from secret (if provided)
         shell: bash
-        env:
-          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG }}
         run: |
-          set -euo pipefail
-          if [ -n "${KUBECONFIG_SECRET:-}" ]; then
-            mkdir -p "$HOME/.kube"
-            echo "$KUBECONFIG_SECRET" > "$HOME/.kube/config"
-            chmod 600 "$HOME/.kube/config"
-            echo "Wrote kubeconfig from secret to $HOME/.kube/config"
-          else
-            echo "No KUBECONFIG secret provided — assuming runner already has kube access or you are using a self-hosted runner with kube access."
-          fi
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
+          export KUBECONFIG=${{ secrets.KUBECONFIG}}
 
       - name: Ensure namespace exists
         shell: bash
         run: |
-          set -euo pipefail
-          kubectl get ns "${Namespace}" --ignore-not-found || kubectl create ns "${Namespace}"
-          echo "Ensured namespace ${Namespace} exists"
+          if ! kubectl get ns "${Namespace}" >/dev/null 2>&1; then
+            kubectl create ns "${Namespace}"
+            echo "Namespace ${Namespace} created"
+          else
+            echo "Namespace ${Namespace} already exists"
+          fi
+
 
       - name: Use local action to install SUSE Observability Agent
         uses: ./
@@ -43,4 +32,4 @@ jobs:
           stackstate_API_Key: ${{ secrets.stackstate_API_Key }}
           stackstateClusterName: "testing-amolk"
           stackstate_URL: "https://rancher-hosted.app.stackstate.io/receiver/stsAgent"
-          Namespace: "suse-observability"
+          Namespace: "suse-observability"  # optional 
