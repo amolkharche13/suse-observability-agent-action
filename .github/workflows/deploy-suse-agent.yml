@@ -2,6 +2,7 @@ name: Install SUSE Observability Agent
 
 on:
   workflow_dispatch:
+  push:
     inputs:
       ClusterName:
         description: "Cluster Name"
@@ -20,14 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure kubeconfig from secret (if using secret)
-        if: ${{ secrets.KUBECONFIG != '' }}
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-
-      # Show contexts (debugging)
       - name: Setup kubectl (for the workflow) and show contexts
         uses: azure/setup-kubectl@v3
         with:
