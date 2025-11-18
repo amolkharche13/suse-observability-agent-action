@@ -17,7 +17,7 @@ jobs:
           kubeconfig: ${{secrets.KUBECONFIG}}
 
       - name: Use local action to install SUSE Observability Agent
-        uses: ./
+        uses: amolkharche13/suse-observability-agent-action@1.0.0
         with:
           stackstate_API_Key: ${{ secrets.stackstate_API_Key }}
           stackstateClusterName: 'testing-cluster'
